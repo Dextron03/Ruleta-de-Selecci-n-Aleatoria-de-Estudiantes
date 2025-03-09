@@ -7,7 +7,12 @@ namespace ruleta;
 
 public class ManejarArchivos {
     public string Ruta="";
-    public bool Reemplazar;
+
+    public void GuardarEstudiateRol(string estudiante, string rol){
+        using (StreamWriter escritor = new StreamWriter("./src/cvs_db/db.csv", true)) { // `true` para agregar sin borrar
+            escritor.WriteLine($"{estudiante}-{rol}");
+        }
+    }
 
     public int TotalItemsCSV(){
         int total= 0;

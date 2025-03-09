@@ -1,6 +1,6 @@
 ﻿namespace ruleta;
 using Figgle;
-
+using System.Diagnostics;
 
 class Program  {
     public static ManejarArchivos manegador = new ManejarArchivos();
@@ -10,19 +10,21 @@ class Program  {
         Random numeroRandom = new Random();
         return numeroRandom.Next(minimo, maximo);
     }
+    
+    static void Speak(string phrase){
+        if (string.IsNullOrWhiteSpace(phrase)) return;
 
-    static string SeleccionarEstudianteAlazar(int indice){
-        manegador.Ruta = "./src/csv/estudiantes.csv";
-        string[] lista = manegador.ArrayDeEstudiantes();
+        string comando = "Add-Type -AssemblyName System.Speech; " +
+                         "$speak = New-Object System.Speech.Synthesis.SpeechSynthesizer; " +
+                         "$speak.Speak('" + phrase + "')";
 
-        return lista[indice];   
-    }
-
-    static string SeleccionarRolAlazar(int indice){
-        manegador.Ruta = "./src/csv/roles.csv";
-        string[] lista = manegador.ArrayDeRoles();
-
-        return lista[indice];   
+        Process.Start(new ProcessStartInfo{
+            FileName = "powershell",
+            Arguments = $"-Command \"{comando}\"",
+            RedirectStandardOutput = true,
+            UseShellExecute = false,
+            CreateNoWindow = true
+        });
     }
 
     static void MostrarListaDeRoles(){
@@ -43,10 +45,10 @@ class Program  {
     }
 
     static void Main(string[] args) {  
-        string[] opciones = {miMenu.primerOpcion, miMenu.segundaOpcion, miMenu.terceraOpcion};
+        string[] opciones = {miMenu.primerOpcion, miMenu.segundaOpcion, miMenu.terceraOpcion, miMenu.cuartaOpcion};
         int seleccion = 0;
-    
         ConsoleKey key;
+
         do{
             Console.Clear();
             miMenu.MensajeDeBienvenida();
@@ -61,32 +63,56 @@ class Program  {
             }
 
             key = Console.ReadKey(true).Key;
-            
+
             if (key == ConsoleKey.UpArrow)
                 seleccion = (seleccion == 0) ? opciones.Length - 1 : seleccion - 1;
             else if (key == ConsoleKey.DownArrow)
                 seleccion = (seleccion == opciones.Length - 1) ? 0 : seleccion + 1;
-        } while (key != ConsoleKey.Enter);
+            else if (key == ConsoleKey.Enter) {
+                Console.Clear();
+                Console.WriteLine(FiggleFonts.Larry3d.Render("Has seleccionado:"));
+                Console.WriteLine(opciones[seleccion]);
 
-        Console.Clear();
-        Console.WriteLine($"Has seleccionado: {opciones[seleccion]}");
-        if(opciones[seleccion] == opciones[0]){
-            MostrarListaDeEstudiantes();
+                if(opciones[seleccion] == opciones[0]){
+                    MostrarListaDeEstudiantes();
+                }else if(opciones[seleccion] == opciones[1]){
+                    MostrarListaDeRoles();
+                }else if(opciones[seleccion] == opciones[2]){
+                    manegador.Ruta = "./src/csv/estudiantes.csv";
+                    string[] estudiantes = manegador.ArrayDeEstudiantes();
+                    manegador.Ruta = "./src/csv/roles.csv";
+                    string[] roles = manegador.ArrayDeRoles();
 
-        }else if(opciones[seleccion] == opciones[1]){
-            MostrarListaDeRoles();
+                    HashSet<string> combinacionesUsadas = new HashSet<string>(File.ReadLines("./src/cvs_db/db.csv"));
+                    
+                    if (combinacionesUsadas.Count >= estudiantes.Length * roles.Length){
+                        Console.WriteLine(FiggleFonts.Larry3d.Render("\nTodos los estudiantes han sido asignados a un rol. No hay más combinaciones disponibles."));
+                        Speak("Todos los estudiantes han sido asignados a un rol.");
+                    } else {
+                        string estudianteSeleccionado;
+                        string rolSeleccionado;
+                        string combinacion;
 
-        }else if(opciones[seleccion] == opciones[2]){
-            manegador.Ruta = "./src/csv/estudiantes.csv";
-            int indiceAleatorio =  NumeroAlAzar(0,manegador.TotalItemsCSV());
-            string estudianteSeleccionado = SeleccionarEstudianteAlazar(indiceAleatorio);
-            
-            manegador.Ruta = "./src/csv/roles.csv";
-            indiceAleatorio =  NumeroAlAzar(0,manegador.TotalItemsCSV());
-            string rolSeleccionado = SeleccionarRolAlazar(indiceAleatorio);
+                        do {
+                            int indiceEstudiante = NumeroAlAzar(0, estudiantes.Length);
+                            int indiceRol = NumeroAlAzar(0, roles.Length);
+                            estudianteSeleccionado = estudiantes[indiceEstudiante];
+                            rolSeleccionado = roles[indiceRol];
+                            combinacion = $"{estudianteSeleccionado}-{rolSeleccionado}";
+                        } while (combinacionesUsadas.Contains(combinacion));
 
-            Console.WriteLine($"{estudianteSeleccionado} - {rolSeleccionado}");
+                        manegador.GuardarEstudiateRol(estudianteSeleccionado, rolSeleccionado);
+                        Speak($"El estudiante seleccionado es {estudianteSeleccionado} - Rol: {rolSeleccionado}");
+                        Console.WriteLine(FiggleFonts.Doom.Render($"El estudiante seleccionado es {estudianteSeleccionado} - {rolSeleccionado}"));
+                    }
+                } 
+                else if (opciones[seleccion] == opciones[3]){
+                    break;
+                }
 
-        }
+                Console.WriteLine(FiggleFonts.Larry3d.Render("\nPresiona cualquier tecla para continuar..."));
+                Console.ReadKey();
+            }
+        } while (true);
     }
 }

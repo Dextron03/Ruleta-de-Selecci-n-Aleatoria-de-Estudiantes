@@ -2,6 +2,8 @@
 bin/
 obj/
 
+db.csv
+
 # Configuración de Visual Studio
 .vs/
 *.suo
