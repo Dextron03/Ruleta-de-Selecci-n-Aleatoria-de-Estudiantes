@@ -9,7 +9,6 @@ public class ManejarArchivos {
     public string Ruta="";
     public bool Reemplazar;
 
-
     public int TotalItemsCSV(){
         int total= 0;
         using (StreamReader lector = new StreamReader(this.Ruta)) {

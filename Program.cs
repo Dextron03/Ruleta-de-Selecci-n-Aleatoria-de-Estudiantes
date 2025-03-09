@@ -18,6 +18,13 @@ class Program  {
         return lista[indice];   
     }
 
+    static string SeleccionarRolAlazar(int indice){
+        manegador.Ruta = "./src/csv/roles.csv";
+        string[] lista = manegador.ArrayDeRoles();
+
+        return lista[indice];   
+    }
+
     static void MostrarListaDeRoles(){
         manegador.Ruta = "./src/csv/roles.csv";
         string[] lista = manegador.ArrayDeRoles();
@@ -65,11 +72,21 @@ class Program  {
         Console.WriteLine($"Has seleccionado: {opciones[seleccion]}");
         if(opciones[seleccion] == opciones[0]){
             MostrarListaDeEstudiantes();
+
         }else if(opciones[seleccion] == opciones[1]){
             MostrarListaDeRoles();
+
         }else if(opciones[seleccion] == opciones[2]){
             manegador.Ruta = "./src/csv/estudiantes.csv";
-            NumeroAlAzar(0,manegador.TotalItemsCSV());
+            int indiceAleatorio =  NumeroAlAzar(0,manegador.TotalItemsCSV());
+            string estudianteSeleccionado = SeleccionarEstudianteAlazar(indiceAleatorio);
+            
+            manegador.Ruta = "./src/csv/roles.csv";
+            indiceAleatorio =  NumeroAlAzar(0,manegador.TotalItemsCSV());
+            string rolSeleccionado = SeleccionarRolAlazar(indiceAleatorio);
+
+            Console.WriteLine($"{estudianteSeleccionado} - {rolSeleccionado}");
+
         }
     }
 }
