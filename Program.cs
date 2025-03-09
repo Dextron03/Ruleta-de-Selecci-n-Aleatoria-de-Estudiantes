@@ -44,6 +44,15 @@ class Program  {
         }
     }
 
+    static bool ExisteCombinacion(string[] combinaciones, string nuevaCombinacion) {
+        foreach (string combinacion in combinaciones) {
+            if (combinacion == nuevaCombinacion) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static void Main(string[] args) {  
         string[] opciones = {miMenu.primerOpcion, miMenu.segundaOpcion, miMenu.terceraOpcion, miMenu.cuartaOpcion};
         int seleccion = 0;
@@ -83,9 +92,9 @@ class Program  {
                     manegador.Ruta = "./src/csv/roles.csv";
                     string[] roles = manegador.ArrayDeRoles();
 
-                    HashSet<string> combinacionesUsadas = new HashSet<string>(File.ReadLines("./src/cvs_db/db.csv"));
+                    string[] combinacionesUsadas = File.ReadAllLines("./src/cvs_db/db.csv");
                     
-                    if (combinacionesUsadas.Count >= estudiantes.Length * roles.Length){
+                    if (combinacionesUsadas.Length >= estudiantes.Length * roles.Length){
                         Console.WriteLine(FiggleFonts.Larry3d.Render("\nTodos los estudiantes han sido asignados a un rol. No hay más combinaciones disponibles."));
                         Speak("Todos los estudiantes han sido asignados a un rol.");
                     } else {
@@ -99,7 +108,7 @@ class Program  {
                             estudianteSeleccionado = estudiantes[indiceEstudiante];
                             rolSeleccionado = roles[indiceRol];
                             combinacion = $"{estudianteSeleccionado}-{rolSeleccionado}";
-                        } while (combinacionesUsadas.Contains(combinacion));
+                        } while (ExisteCombinacion(combinacionesUsadas, combinacion)); // Usamos la función para verificar repeticiones
 
                         manegador.GuardarEstudiateRol(estudianteSeleccionado, rolSeleccionado);
                         Speak($"El estudiante seleccionado es {estudianteSeleccionado} - Rol: {rolSeleccionado}");
