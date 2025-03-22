@@ -1,8 +1,9 @@
 # Directorios de compilación
 bin/
 obj/
+csv
+cvs_db
 
-db.csv
 
 # Configuración de Visual Studio
 .vs/
