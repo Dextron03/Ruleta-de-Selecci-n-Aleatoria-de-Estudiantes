@@ -60,7 +60,7 @@ class Program  {
         for (int i = 0; i < 4; i++) {
             Console.Clear();
             Console.WriteLine(ruleta[i]);
-            Thread.Sleep(100);
+            Thread.Sleep(10);
             repeticion++;
             if(i == 3){
                 i = 0;
@@ -71,23 +71,6 @@ class Program  {
             }
         }
     }
-
-/*     static void PaseDeLista(){
-        manegador.Ruta = "./src/csv/estudiantes.csv";
-        string[] estudiantes = manegador.ArrayDeEstudiantes();
-        string[] asistencia = new string[manegador.TotalItemsCSV()];
-
-        for (int i = 0; i < asistencia.Length; i++){
-            Console.Clear();
-            Console.WriteLine(FiggleFonts.Small.Render($"{estudiantes[i]}"));
-            Console.WriteLine("¿Presente? (S/N): ");
-            string respuesta = Console.ReadLine()?.Trim().ToUpper()!;
-            string estado = (respuesta == "S") ? "Presente" : "Ausente";
-            asistencia[i] = $"{estudiantes[i]},{estado}";
-        }
-        File.WriteAllLines("./src/csv/asistencia.csv", asistencia);
-        Console.WriteLine(FiggleFonts.Larry3d.Render("Pase de lista completado"));
-    } */
 
     static void Main(string[] args) {  
         string[] opciones = {miMenu.primerOpcion, miMenu.segundaOpcion, miMenu.terceraOpcion, miMenu.cuartaOpcion, miMenu.quintaOpcion};

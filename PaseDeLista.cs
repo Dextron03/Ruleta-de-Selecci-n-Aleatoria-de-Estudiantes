@@ -1,4 +1,4 @@
-namespace ruleta;
+namespace ruleta; 
 using Figgle;
 
 class PaseListaMenu {
@@ -7,7 +7,7 @@ class PaseListaMenu {
     static void PaseDeLista() {
         manegador.Ruta = "./src/csv/estudiantes.csv";
         string[] estudiantes = manegador.ArrayDeEstudiantes();
-        List<string> asistencia = new List<string>();
+        string[] asistencia = new string[estudiantes.Length];
 
         Console.Clear();
         Console.WriteLine(FiggleFonts.Isometric3.Render("Pase de Lista"));
@@ -39,7 +39,7 @@ class PaseListaMenu {
                 }
             } while (key != ConsoleKey.Enter);
 
-            asistencia.Add($"{estudiante} - {opciones[seleccion]}");
+            asistencia[Array.IndexOf(estudiantes, estudiante)] = $"{estudiante} - {opciones[seleccion]}";
         }
 
         // Guardar la asistencia en un archivo CSV
