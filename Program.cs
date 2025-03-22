@@ -53,9 +53,30 @@ class Program  {
         return false;
     }
 
+    static void MostrarAnimacionRuleta(string[] ruleta) {
+        Console.Clear();
+        Console.WriteLine(FiggleFonts.Small.Render("Girando la ruleta..."));
+        int repeticion = 0;
+        for (int i = 0; i < 4; i++) {
+            Console.Clear();
+            Console.WriteLine(ruleta[i]);
+            Thread.Sleep(100);
+            repeticion++;
+            if(i == 3){
+                i = 0;
+                if(repeticion > 10){
+                    Console.WriteLine(repeticion);
+                    break;
+                }
+            }
+        }
+    }
+
     static void Main(string[] args) {  
         string[] opciones = {miMenu.primerOpcion, miMenu.segundaOpcion, miMenu.terceraOpcion, miMenu.cuartaOpcion};
         int seleccion = 0;
+        string[] ruleta = {miMenu.ruleta1,miMenu.ruleta2,miMenu.ruleta3, miMenu.ruleta4};
+
         ConsoleKey key;
 
         do{
@@ -92,6 +113,8 @@ class Program  {
                     manegador.Ruta = "./src/csv/roles.csv";
                     string[] roles = manegador.ArrayDeRoles();
 
+                    MostrarAnimacionRuleta(ruleta);
+
                     string[] combinacionesUsadas = File.ReadAllLines("./src/cvs_db/db.csv");
                     
                     if (combinacionesUsadas.Length >= estudiantes.Length * roles.Length){
@@ -108,7 +131,7 @@ class Program  {
                             estudianteSeleccionado = estudiantes[indiceEstudiante];
                             rolSeleccionado = roles[indiceRol];
                             combinacion = $"{estudianteSeleccionado}-{rolSeleccionado}";
-                        } while (ExisteCombinacion(combinacionesUsadas, combinacion)); // Usamos la función para verificar repeticiones
+                        } while (ExisteCombinacion(combinacionesUsadas, combinacion));
 
                         manegador.GuardarEstudiateRol(estudianteSeleccionado, rolSeleccionado);
                         Speak($"El estudiante seleccionado es {estudianteSeleccionado} - Rol: {rolSeleccionado}");
@@ -122,6 +145,6 @@ class Program  {
                 Console.WriteLine(FiggleFonts.Larry3d.Render("\nPresiona cualquier tecla para continuar..."));
                 Console.ReadKey();
             }
-        } while (true);
+        } while (true);    
     }
 }
